@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
-
 import { Tasks } from '../api/tasks.js';
 
 // Task component - represents a single todo item
