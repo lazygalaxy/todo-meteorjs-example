@@ -2,9 +2,11 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
-import { Tasks } from '../api/tasks.js';
-import Task from './Task.jsx';
+
 import AccountsUIWrapper from './AccountsUIWrapper.jsx';
+import Task from './Task.jsx';
+
+import { Tasks } from '../api/tasks.js';
 
 // App component - represents the whole app
 class App extends Component {
