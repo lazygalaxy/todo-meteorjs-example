@@ -1,24 +1,29 @@
-import React, {Component, PropTypes} from 'react';
+//import react libs
+import React from 'react';
 import ReactDOM from 'react-dom';
-import {Meteor} from 'meteor/meteor';
 import {createContainer} from 'meteor/react-meteor-data';
 
-import AccountsUIWrapper from './AccountsUIWrapper.jsx';
+//import react components
+import Accounts from './Accounts.jsx';
 import Task from './Task.jsx';
 
-import {Tasks} from '../api/tasks.js';
+import {TaskCollection} from '../api/collections';
 
 // App component - represents the whole app
-class App extends Component {
+class App extends React.Component {
     constructor(props) {
         super(props);
+
+        this.props.test123 = "vangos";
 
         this.state = {
             hideCompleted: false
         };
     }
 
-    handleSubmit(event) {
+    //event functions
+    _handleSubmit(event) {
+        //prevent the pafe from refreshing
         event.preventDefault();
 
         // Find the text field via the React ref
@@ -30,13 +35,15 @@ class App extends Component {
         ReactDOM.findDOMNode(this.refs.textInput).value = '';
     }
 
-    toggleHideCompleted() {
+    //other functions
+    _toggleHideCompleted() {
         this.setState({
             hideCompleted: !this.state.hideCompleted
         });
     }
 
-    renderTasks() {
+    //render functions
+    _renderTasks() {
         let filteredTasks = this.props.tasks;
         if (this.state.hideCompleted) {
             filteredTasks = filteredTasks.filter(task => !task.checked);
@@ -56,20 +63,19 @@ class App extends Component {
                     <h1>Todo List ({this.props.incompleteCount})</h1>
 
                     <label className="hide-completed">
-                        <input type="checkbox" readOnly checked={this.state.hideCompleted} onClick={this.toggleHideCompleted.bind(this)}/>
+                        <input type="checkbox" readOnly checked={this.state.hideCompleted} onClick={this._toggleHideCompleted.bind(this)}/>
                         Hide Completed Tasks
                     </label>
 
-                    <AccountsUIWrapper/> {this.props.currentUser
-                        ? <form className="new-task" onSubmit={this.handleSubmit.bind(this)}>
+                    <Accounts/> {this.props.currentUser
+                        ? <form className="new-task" onSubmit={this._handleSubmit.bind(this)}>
                                 <input type="text" ref="textInput" placeholder="Type to add new tasks"/>
                             </form>
-                        : ''
-}
+                        : ''}
                 </header>
 
                 <ul>
-                    {this.renderTasks()}
+                    {this._renderTasks()}
                 </ul>
             </div>
         );
@@ -77,21 +83,22 @@ class App extends Component {
 }
 
 App.propTypes = {
-    tasks: PropTypes.array.isRequired,
-    incompleteCount: PropTypes.number.isRequired,
-    currentUser: PropTypes.object
+    tasks: React.PropTypes.array.isRequired,
+    incompleteCount: React.PropTypes.number.isRequired,
+    currentUser: React.PropTypes.object
 };
 
 export default createContainer(() => {
     Meteor.subscribe('tasks');
+    console.info("create constructor running " + Meteor.user());
 
     return {
-        tasks: Tasks.find({}, {
+        tasks: TaskCollection.find({}, {
             sort: {
                 createdAt: -1
             }
         }).fetch(),
-        incompleteCount: Tasks.find({
+        incompleteCount: TaskCollection.find({
             checked: {
                 $ne: true
             }
